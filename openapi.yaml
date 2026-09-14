@@ -1,0 +1,955 @@
+openapi: 3.0.3
+info:
+  title: Cognpulse
+  version: 0.1.0
+  description: First-wave cognitive initiative pulse and portfolio with technology mix, vendor dependency,
+    Fast/Slow/Wader segments, and workforce impact.
+  x-product-slug: ai-enterprise-cognpulse
+  x-source: ai-in-enterprise/deloitte-us-da-2017-deloitte-state-of-cognitive-survey/
+servers:
+- url: https://api.example.com
+tags:
+- name: Initiatives
+  description: Cognitive initiatives
+- name: Technologies
+  description: Technology tags
+- name: Vendors
+  description: Vendor links
+- name: Segments
+  description: Fast Slow Wader scores
+- name: Workforce
+  description: Workforce impact
+- name: Pulse
+  description: Internal pulse surveys
+- name: Portfolio
+  description: Portfolio policy
+- name: Governance
+  description: Audit
+paths:
+  /v1/initiatives:
+    get:
+      operationId: listCognitiveInitiatives
+      tags:
+      - Initiatives
+      security:
+      - ApiKeyAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Initiatives
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelopeCognitiveInitiative'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+    post:
+      operationId: createCognitiveInitiative
+      tags:
+      - Initiatives
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeCognitiveInitiative'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CognitiveInitiativeCreate'
+  /v1/initiatives/{initiativeId}:
+    parameters:
+    - name: initiativeId
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      operationId: getCognitiveInitiative
+      tags:
+      - Initiatives
+      security:
+      - ApiKeyAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Initiative
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeCognitiveInitiative'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/technology-tags:
+    post:
+      operationId: addTechnologyTag
+      tags:
+      - Technologies
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Tag added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeTechnologyTag'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechnologyTagCreate'
+  /v1/initiatives/{initiativeId}/technologies:
+    parameters:
+    - name: initiativeId
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      operationId: listInitiativeTechnologies
+      tags:
+      - Technologies
+      security:
+      - ApiKeyAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Tags
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelopeTechnologyTag'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/vendor-links:
+    post:
+      operationId: addVendorLink
+      tags:
+      - Vendors
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Link added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeVendorLink'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VendorLinkCreate'
+  /v1/segments:
+    get:
+      operationId: listSegmentScores
+      tags:
+      - Segments
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Segments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelopeSegmentScore'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+    post:
+      operationId: upsertSegmentScore
+      tags:
+      - Segments
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Segment upserted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeSegmentScore'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SegmentScoreCreate'
+  /v1/workforce-impacts:
+    post:
+      operationId: recordWorkforceImpact
+      tags:
+      - Workforce
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeWorkforceImpact'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkforceImpactCreate'
+  /v1/benefit-attestations:
+    post:
+      operationId: attestBenefit
+      tags:
+      - Portfolio
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Attested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeBenefitAttestation'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BenefitAttestationCreate'
+  /v1/pulse-surveys:
+    get:
+      operationId: listPulseSurveys
+      tags:
+      - Pulse
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Surveys
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelopePulseSurvey'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+    post:
+      operationId: openPulseSurvey
+      tags:
+      - Pulse
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Opened
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopePulseSurvey'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PulseSurveyCreate'
+  /v1/pulse-surveys/{surveyId}/close:
+    parameters:
+    - name: surveyId
+      in: path
+      required: true
+      schema:
+        type: string
+    post:
+      operationId: closePulseSurvey
+      tags:
+      - Pulse
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Closed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopePulseSurvey'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/portfolio/policy:
+    put:
+      operationId: upsertPortfolioPolicy
+      tags:
+      - Portfolio
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Policy upserted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopePortfolioPolicy'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PortfolioPolicyUpsert'
+  /v1/governance/audit-entries:
+    get:
+      operationId: listAuditEntries
+      tags:
+      - Governance
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Audit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelopeAuditEntry'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    UnprocessableEntity:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    ResponseMeta:
+      type: object
+      required:
+      - requestId
+      - timestamp
+      properties:
+        requestId:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    Problem:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+    CognitiveInitiative:
+      type: object
+      required:
+      - id
+      - name
+      - objective
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        objective:
+          type: string
+          enum:
+          - internal_efficiency
+          - decision_support
+          - customer_interaction
+          - new_product
+        integrationRisk:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+        status:
+          type: string
+    DataEnvelopeCognitiveInitiative:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/CognitiveInitiative'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeCognitiveInitiative:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/CognitiveInitiative'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    TechnologyTag:
+      type: object
+      required:
+      - id
+      - initiativeId
+      - technology
+      properties:
+        id:
+          type: string
+        initiativeId:
+          type: string
+        technology:
+          type: string
+          enum:
+          - rpa
+          - rules
+          - ml
+          - nlp
+          - speech
+          - vision
+          - deep_learning
+          - robotics
+    DataEnvelopeTechnologyTag:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/TechnologyTag'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeTechnologyTag:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/TechnologyTag'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    VendorLink:
+      type: object
+      required:
+      - id
+      - initiativeId
+      - dependency
+      properties:
+        id:
+          type: string
+        initiativeId:
+          type: string
+        vendorName:
+          type: string
+        dependency:
+          type: string
+          enum:
+          - single
+          - multi
+          - in_house
+    DataEnvelopeVendorLink:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/VendorLink'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeVendorLink:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/VendorLink'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    SegmentScore:
+      type: object
+      required:
+      - id
+      - unitId
+      - segment
+      properties:
+        id:
+          type: string
+        unitId:
+          type: string
+        segment:
+          type: string
+          enum:
+          - fast_lane
+          - slow_lane
+          - wader
+        projectCount:
+          type: integer
+        sophisticationScore:
+          type: number
+    DataEnvelopeSegmentScore:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/SegmentScore'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeSegmentScore:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/SegmentScore'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    WorkforceImpact:
+      type: object
+      required:
+      - id
+      - initiativeId
+      - outlook
+      properties:
+        id:
+          type: string
+        initiativeId:
+          type: string
+        outlook:
+          type: string
+          enum:
+          - jobs_added
+          - little_or_no_loss
+          - moderate_loss_expected
+    DataEnvelopeWorkforceImpact:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/WorkforceImpact'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeWorkforceImpact:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/WorkforceImpact'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    BenefitAttestation:
+      type: object
+      required:
+      - id
+      - initiativeId
+      - level
+      properties:
+        id:
+          type: string
+        initiativeId:
+          type: string
+        level:
+          type: string
+          enum:
+          - substantial
+          - moderate
+          - none
+        attestedAt:
+          type: string
+          format: date-time
+    DataEnvelopeBenefitAttestation:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/BenefitAttestation'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeBenefitAttestation:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/BenefitAttestation'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    PulseSurvey:
+      type: object
+      required:
+      - id
+      - period
+      - status
+      properties:
+        id:
+          type: string
+        period:
+          type: string
+        status:
+          type: string
+          enum:
+          - open
+          - closed
+        transformExpectationPercent:
+          type: number
+    DataEnvelopePulseSurvey:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/PulseSurvey'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopePulseSurvey:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/PulseSurvey'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    PortfolioPolicy:
+      type: object
+      required:
+      - id
+      - minCustomerFacingShare
+      properties:
+        id:
+          type: string
+        minCustomerFacingShare:
+          type: number
+        minTransformationalShare:
+          type: number
+    DataEnvelopePortfolioPolicy:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/PortfolioPolicy'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopePortfolioPolicy:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/PortfolioPolicy'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    AuditEntry:
+      type: object
+      required:
+      - id
+      - eventType
+      - occurredAt
+      properties:
+        id:
+          type: string
+        eventType:
+          type: string
+        occurredAt:
+          type: string
+          format: date-time
+    DataEnvelopeAuditEntry:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/AuditEntry'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeAuditEntry:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/AuditEntry'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    CognitiveInitiativeCreate:
+      type: object
+      required:
+      - name
+      - objective
+      properties:
+        name:
+          type: string
+        objective:
+          type: string
+        integrationRisk:
+          type: string
+    TechnologyTagCreate:
+      type: object
+      required:
+      - initiativeId
+      - technology
+      properties:
+        initiativeId:
+          type: string
+        technology:
+          type: string
+    VendorLinkCreate:
+      type: object
+      required:
+      - initiativeId
+      - dependency
+      properties:
+        initiativeId:
+          type: string
+        vendorName:
+          type: string
+        dependency:
+          type: string
+    SegmentScoreCreate:
+      type: object
+      required:
+      - unitId
+      - segment
+      properties:
+        unitId:
+          type: string
+        segment:
+          type: string
+        projectCount:
+          type: integer
+        sophisticationScore:
+          type: number
+    WorkforceImpactCreate:
+      type: object
+      required:
+      - initiativeId
+      - outlook
+      properties:
+        initiativeId:
+          type: string
+        outlook:
+          type: string
+    BenefitAttestationCreate:
+      type: object
+      required:
+      - initiativeId
+      - level
+      properties:
+        initiativeId:
+          type: string
+        level:
+          type: string
+    PulseSurveyCreate:
+      type: object
+      required:
+      - period
+      properties:
+        period:
+          type: string
+    PortfolioPolicyUpsert:
+      type: object
+      required:
+      - minCustomerFacingShare
+      properties:
+        minCustomerFacingShare:
+          type: number
+        minTransformationalShare:
+          type: number
